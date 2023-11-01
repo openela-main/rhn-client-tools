@@ -1,0 +1,28 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index 37010d8..4ddbaad 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -10,10 +10,12 @@
+ %define pythonX %{?default_py3: python3}%{!?default_py3: python2}
+ %{!?python2_sitelib: %global python2_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+ 
++%global debug_package %{nil}
++
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 8%{?dist}
++Release: 9%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -687,6 +689,9 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Thu Sep 27 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-9
++- Resolves: #1622145 - disable debug* packages (tkasparek@redhat.com)
++
+ * Thu Sep 27 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-8
+ - Related: #1622145 - don't run dmi_warnings() if there's no dmidecode
+   (tkasparek@redhat.com)

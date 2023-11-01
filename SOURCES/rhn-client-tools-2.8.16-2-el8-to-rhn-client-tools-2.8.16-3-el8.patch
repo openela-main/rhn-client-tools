@@ -1,0 +1,65 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index 5babf90..9c40d15 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -1,4 +1,4 @@
+-%if 0%{?fedora} || 0%{?suse_version} > 1320
++%if 0%{?fedora} || 0%{?suse_version} > 1320 || 0%{?rhel} >= 8
+ %global build_py3   1
+ %global default_py3 1
+ %endif
+@@ -9,7 +9,7 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 2%{?dist}
++Release: 3%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -26,7 +26,7 @@ Requires: %{pythonX}-%{name} = %{version}-%{release}
+ %if 0%{?suse_version}
+ Requires: zypper
+ %else
+-%if 0%{?fedora}
++%if 0%{?fedora} || 0%{?rhel} >= 8
+ Requires: dnf
+ %else
+ Requires: yum
+@@ -48,10 +48,15 @@ BuildRequires: desktop-file-utils
+ BuildRequires: fedora-logos
+ BuildRequires: dnf
+ %endif
++
+ %if 0%{?rhel}
+ BuildRequires: redhat-logos
++%if 0%{?rhel} >= 8
++BuildRequires: dnf
++%else
+ BuildRequires: yum
+ %endif
++%endif
+ 
+ %description
+ Red Hat Satellite Client Tools provides programs and libraries to allow your
+@@ -147,7 +152,7 @@ Requires: %{pythonX}-rhn-check = %{version}-%{release}
+ %if 0%{?suse_version}
+ Requires: zypp-plugin-spacewalk
+ %else
+-%if 0%{?fedora}
++%if 0%{?fedora} || 0%{?rhel} >= 8
+ Requires: dnf-plugin-spacewalk >= 2.4.0
+ %else
+ Requires: yum-rhn-plugin >= 1.6.4-1
+@@ -647,6 +652,11 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Tue Feb 20 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-3
++- don't require yum on rhel8 (tkasparek@redhat.com)
++- require dnf-plugin-spacewalk on rhel8 (tkasparek@redhat.com)
++- rhel8 utilizes python3 (tkasparek@redhat.com)
++
+ * Mon Feb 19 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-2
+ - rebuild for rhel8
+ 

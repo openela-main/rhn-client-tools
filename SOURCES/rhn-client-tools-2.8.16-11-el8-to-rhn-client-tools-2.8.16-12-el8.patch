@@ -1,0 +1,36 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index 1d9e477..9dafedf 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -15,7 +15,7 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 11%{?dist}
++Release: 12%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -689,6 +689,9 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Mon Feb 04 2019 Michael Mraka <michael.mraka@redhat.com> 2.8.16-12
++- Resolves: #1666099 - python3 is picky about bytes and string
++
+ * Tue Nov 06 2018 Michael Mraka <michael.mraka@redhat.com> 2.8.16-11
+ - Resolves: #1646929 - convert values from bytes to string in py3
+ 
+diff --git a/src/up2date_client/config.py b/src/up2date_client/config.py
+index 077312f..79d70be 100644
+--- a/src/up2date_client/config.py
++++ b/src/up2date_client/config.py
+@@ -122,7 +122,7 @@ class ConfigFile:
+                 # possibly split value into a list
+                 values = value.split(";")
+                 if key in ['proxyUser', 'proxyPassword']:
+-                    value = str(value.encode(locale.getpreferredencoding()))
++                    value = sstr(value.encode(locale.getpreferredencoding()))
+                 elif len(values) == 1:
+                     try:
+                         value = int(value)

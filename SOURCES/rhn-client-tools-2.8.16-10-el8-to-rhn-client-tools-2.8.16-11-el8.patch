@@ -1,0 +1,51 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index a14055c..1d9e477 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -15,7 +15,7 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 10%{?dist}
++Release: 11%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -689,6 +689,9 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Tue Nov 06 2018 Michael Mraka <michael.mraka@redhat.com> 2.8.16-11
++- Resolves: #1646929 - convert values from bytes to string in py3
++
+ * Fri Nov 02 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-10
+ - Resolves: #1626421 - python3 is expecting str, not bytes
+   (tkasparek@redhat.com)
+diff --git a/src/up2date_client/up2dateUtils.py b/src/up2date_client/up2dateUtils.py
+index b7d4496..93aea40 100644
+--- a/src/up2date_client/up2dateUtils.py
++++ b/src/up2date_client/up2dateUtils.py
+@@ -38,8 +38,9 @@ else:
+             SYSRELVER = 'system-release(releasever)'
+             version = sstr(h['version'])
+             release = sstr(h['release'])
+-            if SYSRELVER in h['providename']:
+-                provides = dict(zip(h['providename'], h['provideversion']))
++            if SYSRELVER in (sstr(provide) for provide in h['providename']):
++                provides = dict((sstr(n), sstr(v))
++                                for n,v in zip(h['providename'], h['provideversion']))
+                 release = '%s-%s' % (version, release)
+                 version = provides[SYSRELVER]
+             osVersionRelease = (sstr(h['name']), version, release)
+@@ -49,8 +50,9 @@ else:
+                 SYSRELVER = 'system-release(releasever)'
+                 version = sstr(h['version'])
+                 release = sstr(h['release'])
+-                if SYSRELVER in h['providename']:
+-                    provides = dict(zip(h['providename'], h['provideversion']))
++                if SYSRELVER in (sstr(provide) for provide in h['providename']):
++                    provides = dict((sstr(n), sstr(v))
++                                    for n,v in zip(h['providename'], h['provideversion']))
+                     release = '%s-%s' % (version, release)
+                     version = provides[SYSRELVER]
+                 osVersionRelease = (sstr(h['name']), version, release)

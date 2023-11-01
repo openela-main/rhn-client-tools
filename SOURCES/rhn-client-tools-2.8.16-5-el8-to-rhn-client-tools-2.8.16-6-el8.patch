@@ -1,0 +1,32 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index 73ad32d..6284bdf 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -13,7 +13,7 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 5%{?dist}
++Release: 6%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -290,6 +290,7 @@ Python 3 specific files for rhn-setup-gnome.
+ make -f Makefile.rhn-client-tools
+ 
+ %install
++export RHEL_ALLOW_PYTHON2_FOR_BUILD=1
+ %if 0%{?build_py2}
+ make -f Makefile.rhn-client-tools install VERSION=%{version}-%{release} \
+         PYTHONPATH=%{python_sitelib} PYTHONVERSION=%{python_version} \
+@@ -680,6 +681,10 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Tue Jul 24 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-6
++- set RHEL_ALLOW_PYTHON2_FOR_BUILD=1 to enable using gtk-builder-convert during
++  build (tkasparek@redhat.com)
++
+ * Mon Apr 16 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-5
+ - Resolves: #1566025 - require latest provider of /usr/bin/gpg
+   (tkasparek@redhat.com)
