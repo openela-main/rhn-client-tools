@@ -1,0 +1,37 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index 4ddbaad..a14055c 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -15,7 +15,7 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 9%{?dist}
++Release: 10%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -689,6 +689,10 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Fri Nov 02 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-10
++- Resolves: #1626421 - python3 is expecting str, not bytes
++  (tkasparek@redhat.com)
++
+ * Thu Sep 27 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-9
+ - Resolves: #1622145 - disable debug* packages (tkasparek@redhat.com)
+ 
+diff --git a/src/up2date_client/config.py b/src/up2date_client/config.py
+index 242f92e..077312f 100644
+--- a/src/up2date_client/config.py
++++ b/src/up2date_client/config.py
+@@ -312,7 +312,7 @@ def getProxySetting():
+         if proxyHost[:7] == "http://":
+             proxyHost = proxyHost[7:]
+         parts = proxyHost.split(':')
+-        parts[0] = idn_ascii_to_puny(parts[0])
++        parts[0] = str(idn_ascii_to_puny(parts[0]))
+         proxy = ':'.join(parts)
+ 
+     return proxy

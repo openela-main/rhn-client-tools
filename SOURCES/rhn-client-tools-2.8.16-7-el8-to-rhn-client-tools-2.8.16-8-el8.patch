@@ -1,0 +1,97 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index ebfe178..37010d8 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -13,11 +13,13 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 7%{?dist}
++Release: 8%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+-BuildArch: noarch
++#BuildArch: noarch
++# see BZ 1617942 for more info as Requires are written into RPM headers
++# there's no way how to do this dynamicaly based on arch, so splitting arches is the only option
+ %if 0%{?suse_version}
+ BuildRequires: update-desktop-files
+ %endif
+@@ -72,7 +74,9 @@ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ %{?python_provide:%python_provide python2-%{name}}
+ Requires: %{name} = %{version}-%{release}
+ Requires: rpm-python
++%if %{_arch} == x86_64
+ Requires: python-dmidecode
++%endif
+ Requires: python-ethtool >= 0.4
+ Requires: rhnlib >= 2.5.78
+ BuildRequires: python-devel
+@@ -135,7 +139,9 @@ Requires: newt-python3
+ Requires: python3-gobject-base
+ %endif
+ Requires: python3-rpm
++%if %{_arch} == x86_64
+ Requires: python3-dmidecode
++%endif
+ Requires: python3-netifaces
+ Requires: python3-hwdata
+ Requires: python3-rhnlib >= 2.5.78
+@@ -681,6 +687,13 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Thu Sep 27 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-8
++- Related: #1622145 - don't run dmi_warnings() if there's no dmidecode
++  (tkasparek@redhat.com)
++- Related: #1622145 - split into arch package (tkasparek@redhat.com)
++- Resolves: #1622145 - drop dmidecode dependency on non x86_64 arches
++  (tkasparek@redhat.com)
++
+ * Tue Jul 24 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-7
+ - bump package version
+ 
+diff --git a/src/up2date_client/hardware.py b/src/up2date_client/hardware.py
+index 0cb9f76..c63df42 100644
+--- a/src/up2date_client/hardware.py
++++ b/src/up2date_client/hardware.py
+@@ -46,6 +46,12 @@ try:
+ except ImportError:
+     netifaces_present = False
+ 
++try:
++    import dmidecode
++    dmidecode_present = True
++except ImportError:
++    dmidecode_present = False
++
+ import gettext
+ t = gettext.translation('rhn-client-tools', fallback=True)
+ # Python 3 translations don't have a ugettext method
+@@ -54,7 +60,6 @@ if not hasattr(t, 'ugettext'):
+ _ = t.ugettext
+ 
+ import dbus
+-import dmidecode
+ from up2date_client import up2dateLog
+ 
+ try:
+@@ -83,7 +88,7 @@ except ImportError:
+ 
+ # this does not change, we can cache it
+ _dmi_data           = None
+-_dmi_not_available  = 0
++_dmi_not_available  = 0 if dmidecode_present else 1
+ 
+ def dmi_warnings():
+     if not hasattr(dmidecode, 'get_warnings'):
+@@ -91,7 +96,7 @@ def dmi_warnings():
+ 
+     return dmidecode.get_warnings()
+ 
+-dmi_warn = dmi_warnings()
++dmi_warn = None if _dmi_not_available else dmi_warnings()
+ if dmi_warn:
+     dmidecode.clear_warnings()
+     log = up2dateLog.initLog()

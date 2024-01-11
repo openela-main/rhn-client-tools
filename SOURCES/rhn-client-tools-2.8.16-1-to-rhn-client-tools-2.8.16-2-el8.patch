@@ -1,0 +1,23 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index 4b46b95..5babf90 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -9,7 +9,7 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 1%{?dist}
++Release: 2%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -647,6 +647,9 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Mon Feb 19 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-2
++- rebuild for rhel8
++
+ * Fri Feb 09 2018 Michael Mraka <michael.mraka@redhat.com> 2.8.16-1
+ - remove install/clean section initial cleanup
+ - removed Group from specfile

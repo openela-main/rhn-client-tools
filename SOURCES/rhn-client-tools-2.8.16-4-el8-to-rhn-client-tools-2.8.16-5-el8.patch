@@ -1,0 +1,33 @@
+diff --git a/rhn-client-tools.spec b/rhn-client-tools.spec
+index 7a7a051..73ad32d 100644
+--- a/rhn-client-tools.spec
++++ b/rhn-client-tools.spec
+@@ -13,7 +13,7 @@
+ Summary: Support programs and libraries for Red Hat Satellite or Spacewalk
+ Name: rhn-client-tools
+ Version: 2.8.16
+-Release: 4%{?dist}
++Release: 5%{?dist}
+ License: GPLv2
+ Source0: https://github.com/spacewalkproject/spacewalk/archive/%{name}-%{version}.tar.gz
+ URL:     https://github.com/spacewalkproject/spacewalk
+@@ -23,7 +23,7 @@ BuildRequires: update-desktop-files
+ %endif
+ 
+ Requires: rpm >= 4.2.3-24_nonptl
+-Requires: gnupg
++Requires: /usr/bin/gpg
+ Requires: coreutils
+ Requires: %{pythonX}-%{name} = %{version}-%{release}
+ 
+@@ -680,6 +680,10 @@ make -f Makefile.rhn-client-tools test
+ %endif
+ 
+ %changelog
++* Mon Apr 16 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-5
++- Resolves: #1566025 - require latest provider of /usr/bin/gpg
++  (tkasparek@redhat.com)
++
+ * Tue Mar 20 2018 Tomas Kasparek <tkasparek@redhat.com> 2.8.16-4
+ - don't try to delete python2 files when there are none (tkasparek@redhat.com)
+ - don't build python2 when building python3 only (tkasparek@redhat.com)
